@@ -1,0 +1,3 @@
+{"claim_id": "C123", "reuse_risk": 0.91, "evidence_uncertainty": 0.12,
+ "cross_customer_reuse": true, "catalogue_image": false,
+ "matches": [{"other_claim": "C044", "p_same_source": 0.97, "orb_inliers": 212}]}
