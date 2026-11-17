@@ -1,4 +1,7 @@
-# PDF ki Listing C-1 (retail_returns.py) poora yahan paste karo
+"""Track C - daily sales + returns series from Online Retail II (invoices starting with 'C' = cancellations/returns)."""
+import pandas as pd
+
+
 def retail_daily(xlsx_path, country="United Kingdom"):
     df = pd.concat(
         pd.read_excel(xlsx_path, sheet_name=None).values()
