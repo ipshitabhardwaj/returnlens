@@ -8,15 +8,36 @@ import lightgbm as lgb
 FEATS = ["phash_sim", "orb_good", "orb_inliers", "inlier_ratio", "emb_cos", "min_blur", "min_side"]
 
 
-def fit_verifier(train_df, feats=None):
-    """Fit + calibrate on a given training frame (use the train split by product). Returns the model with .feats_."""
+def _calibrated(model):
+    return CalibratedClassifierCV(model, method="isotonic", cv=3)
+
+
+def fit_verifier(train_df, feats=None, backend=None):
+    """Fit + calibrate on a given training frame (use the train split by product). Returns the model with .feats_.
+
+    backend: "lgbm" (default on Linux/Colab) or "hgb" (default on Windows) (scikit-learn HistGradientBoosting). If LightGBM's native library crashes on
+    your machine (seen on some Windows installs: 'access violation'), this falls back to "hgb" automatically.
+    Force it with the environment variable RETURNLENS_VERIFIER=hgb."""
+    import os
+    from sklearn.ensemble import HistGradientBoostingClassifier
+
     feats = feats or [f for f in FEATS if f in train_df.columns]
-    clf = CalibratedClassifierCV(
-        lgb.LGBMClassifier(n_estimators=200, learning_rate=0.05, num_leaves=15, verbose=-1),
-        method="isotonic",
-        cv=3,
-    )
-    clf.fit(train_df[feats], train_df.y)
+    import sys
+
+    # LightGBM's native library crashes on some Windows setups, so default to scikit-learn there.
+    backend = backend or os.environ.get("RETURNLENS_VERIFIER", "hgb" if sys.platform == "win32" else "lgbm")
+    X, y = train_df[feats], train_df.y
+    clf = None
+    if backend == "lgbm":
+        try:
+            clf = _calibrated(lgb.LGBMClassifier(n_estimators=200, learning_rate=0.05, num_leaves=15, verbose=-1))
+            clf.fit(X, y)
+        except Exception as e:  # OSError on a broken native lib
+            print("LightGBM failed (%s: %s); falling back to scikit-learn HistGradientBoosting" % (type(e).__name__, e))
+            clf = None
+    if clf is None:
+        clf = _calibrated(HistGradientBoostingClassifier(max_iter=200, learning_rate=0.05, max_leaf_nodes=15, random_state=0))
+        clf.fit(X, y)
     clf.feats_ = list(feats)
     return clf
 

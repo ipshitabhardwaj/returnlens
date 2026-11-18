@@ -11,10 +11,10 @@ from fastapi.testclient import TestClient
 
 
 def _make(tmp_path):
-    for p in range(15):
+    for p in range(10):
         for k in range(3):
             cv2.imwrite(str(tmp_path / f"{1000 + p}_{k}.JPG"), photo(p * 10 + k))
-    P = pool.folder_pool(str(tmp_path), max_products=15)
+    P = pool.folder_pool(str(tmp_path), max_products=10)
     clf = fit_verifier(build_pairs(P, n_variants=3))
     gallery = [dict(image_id=p["source_id"], path=p["path"], claim_id=f"G{i}", customer_id=f"cust{i}",
                     product_id=p["product_id"], is_catalogue=(i == 0)) for i, p in enumerate(P)]

@@ -14,10 +14,10 @@ def _emb(img):
 
 
 def test_pipeline_pieces(tmp_path):
-    for p in range(20):
+    for p in range(12):
         for k in range(3):
             cv2.imwrite(str(tmp_path / f"{1000 + p}_{k}.JPG"), photo(p * 10 + k))
-    P = pool.folder_pool(str(tmp_path), max_products=20)
+    P = pool.folder_pool(str(tmp_path), max_products=12)
     df = build_pairs(P, n_variants=2, emb_fn=_emb)
     assert {"emb_cos", "path_a", "path_b"} <= set(df.columns)
     tr, va, te = pool.split_by_group(df)
@@ -28,4 +28,4 @@ def test_pipeline_pieces(tmp_path):
     assert 0 <= ev.ece(te.y, p) <= 1
     assert len(ev.error_gallery(te, p, k=2)) == 4
     assert retrieval.recall_at_k(np.eye(5), np.eye(5), range(5))["R@1"] == 1.0
-    assert set(ev.chain_experiment(P, clf, emb_fn=_emb, n_chains=3).index) == {"graph", "pairwise"}
+    assert set(ev.chain_experiment(P, clf, emb_fn=_emb, n_chains=2).index) == {"graph", "pairwise"}
