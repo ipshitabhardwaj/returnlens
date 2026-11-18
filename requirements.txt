@@ -17,3 +17,5 @@ pydantic
 httpx
 pytest
 matplotlib
+streamlit
+joblib

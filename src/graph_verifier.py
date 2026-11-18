@@ -8,16 +8,24 @@ import lightgbm as lgb
 FEATS = ["phash_sim", "orb_good", "orb_inliers", "inlier_ratio", "emb_cos", "min_blur", "min_side"]
 
 
-def train_verifier(df):
-    """df has FEATS + y + source_group. Split by SOURCE so transformed copies never leak."""
-    tr, te = next(GroupShuffleSplit(1, test_size=0.3, random_state=0).split(df, df.y, df.source_group))
+def fit_verifier(train_df, feats=None):
+    """Fit + calibrate on a given training frame (use the train split by product). Returns the model with .feats_."""
+    feats = feats or [f for f in FEATS if f in train_df.columns]
     clf = CalibratedClassifierCV(
         lgb.LGBMClassifier(n_estimators=200, learning_rate=0.05, num_leaves=15, verbose=-1),
         method="isotonic",
         cv=3,
     )
-    clf.fit(df.iloc[tr][FEATS], df.iloc[tr].y)
-    return clf, df.iloc[te]
+    clf.fit(train_df[feats], train_df.y)
+    clf.feats_ = list(feats)
+    return clf
+
+
+def train_verifier(df):
+    """df has FEATS + y + source_group. Split by SOURCE so transformed copies never leak."""
+    grp = df["source_group"] if "source_group" in df else df["group"]
+    tr, te = next(GroupShuffleSplit(1, test_size=0.3, random_state=0).split(df, df.y, grp))
+    return fit_verifier(df.iloc[tr]), df.iloc[te]
 
 
 def evidence_uncertainty(row):
@@ -47,8 +55,7 @@ def build_graph(claims, edges):
     return G
 
 
-def graph_features(G, claim_id):
-    """Cross-claim context for one claim: how many OTHER customers share its image cluster?"""
+def _cluster(G, claim_id):
     img = next(n for n in G[claim_id] if G.nodes[n]["kind"] == "Image")
     M = nx.Graph([(u, v) for u, v, d in G.edges(data=True) if d["rel"] == "POSSIBLE_SOURCE_MATCH"])
     cluster = nx.node_connected_component(M, img) if img in M else {img}
@@ -58,6 +65,28 @@ def graph_features(G, claim_id):
             if G.nodes[n]["kind"] == "Claim":
                 claims.add(n)
                 custs |= {m for m in G[n] if G.nodes[m]["kind"] == "Customer"}
+    return img, cluster, claims, custs
+
+
+def cluster_claims(G, claim_id):
+    """All claims whose image is (transitively) linked to this claim's image, including itself."""
+    return _cluster(G, claim_id)[2]
+
+
+def query_uncertainty(img_bgr):
+    """Evidence uncertainty from the QUERY photo alone (blur, tiny, texture-poor). Not a fraud signal."""
+    import cv2
+
+    g = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2GRAY)
+    u = 0.4 if cv2.Laplacian(g, cv2.CV_64F).var() < 50 else 0.0
+    u += 0.3 if min(g.shape[:2]) < 200 else 0.0
+    u += 0.3 if len(cv2.ORB_create(500).detect(g, None)) < 100 else 0.0
+    return min(u, 1.0)
+
+
+def graph_features(G, claim_id):
+    """Cross-claim context for one claim: how many OTHER customers share its image cluster?"""
+    img, cluster, claims, custs = _cluster(G, claim_id)
     return {
         "cluster_size": len(cluster),
         "n_claims": len(claims),

@@ -56,21 +56,28 @@ def supcon_loss(z, ids, temp=0.07):
 def make_batch(sources, n_products=24, per_product=2, views=2):
     """sources: dict product_id -> list of (source_id, PIL image).
     Put >=2 different sources of the SAME product in each batch."""
-    xs, ids = [], []
-    for pid in random.sample(list(sources), n_products):
+    xs, ids, n = [], [], 0
+    for pid in random.sample(list(sources), min(n_products, len(sources))):
         for sid, img in random.sample(sources[pid], min(per_product, len(sources[pid]))):
             for _ in range(views):
                 xs.append(VIEW(img))
-                ids.append(sid)
+                ids.append(n)  # integer id per source image within this batch (sid may be a string)
+            n += 1
     return torch.stack(xs), torch.tensor(ids)
 
 
-def train(sources, steps=3000, lr=3e-5, device="cuda"):
+def train(sources, steps=3000, lr=3e-5, device="cuda", ckpt="embedder.pt", resume=False, n_products=24):
+    """sources: dict product_id -> list of (source_id, PIL image). Saves ckpt every 100 steps."""
+    import os
+
     m = Embedder().to(device)
+    if resume and os.path.exists(ckpt):
+        m.load_state_dict(torch.load(ckpt, map_location=device))
+        print("resumed from", ckpt)
     opt = torch.optim.AdamW([p for p in m.parameters() if p.requires_grad], lr=lr)
-    scaler = torch.cuda.amp.GradScaler()
+    scaler = torch.amp.GradScaler("cuda")
     for s in range(steps):
-        x, ids = make_batch(sources)
+        x, ids = make_batch(sources, n_products=n_products)
         x, ids = x.to(device), ids.to(device)
         with torch.autocast("cuda", dtype=torch.float16):
             z = m(x)
@@ -81,5 +88,5 @@ def train(sources, steps=3000, lr=3e-5, device="cuda"):
         scaler.update()
         if s % 100 == 0:
             print(s, round(loss.item(), 4))
-            torch.save(m.state_dict(), "embedder.pt")
+            torch.save(m.state_dict(), ckpt)
     return m

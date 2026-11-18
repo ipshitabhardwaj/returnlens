@@ -8,6 +8,24 @@ import pandas as pd
 
 app = FastAPI(title="ReturnLens")
 
+SCORER = None  # Track A: set via set_scorer() or the RETURNLENS_ARTIFACTS folder (see score_claim.save_artifacts)
+
+
+def set_scorer(scorer):
+    global SCORER
+    SCORER = scorer
+
+
+@app.on_event("startup")
+def _load_scorer():
+    import os
+
+    d = os.environ.get("RETURNLENS_ARTIFACTS")
+    if d and SCORER is None:
+        from score_claim import load_scorer
+
+        set_scorer(load_scorer(d))
+
 
 class EvidenceOut(BaseModel):  # Track A -> everyone
     claim_id: str
@@ -43,7 +61,9 @@ def health():
 
 
 @app.post("/evidence", response_model=EvidenceOut)
-def evidence(claim_id: str):
+def evidence(claim_id: str, image_path: str = "", customer_id: str = ""):
+    if SCORER is not None and image_path:  # real Track A scorer
+        return EvidenceOut(**SCORER.score(image_path, claim_id, customer_id or None))
     return EvidenceOut(claim_id=claim_id, reuse_risk=0.05, evidence_uncertainty=0.1)  # STUB (A)
 
 
