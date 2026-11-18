@@ -55,11 +55,17 @@ def ablation(train, val, test, feats=None):
     return pd.DataFrame(rows)
 
 
-def error_gallery(test, p, k=10):
-    """The k worst false positives on hard negatives and the k worst misses. Add a one-line reason by hand."""
+def error_gallery(test, p, k=10, thr=0.5):
+    """The k highest-scoring negatives and the k lowest-scoring positives.
+
+    A row is labelled false_positive / miss ONLY if it is a real error at `thr`; otherwise it is labelled
+    hardest_negative / weakest_positive (the closest calls, still correct). Add a one-line reason by hand.
+    """
     d = test.assign(p=np.asarray(p))
-    fp = d[(d.y == 0)].sort_values("p", ascending=False).head(k).assign(error="false_positive")
-    fn = d[(d.y == 1)].sort_values("p").head(k).assign(error="miss")
+    fp = d[(d.y == 0)].sort_values("p", ascending=False).head(k)
+    fp = fp.assign(error=np.where(fp.p >= thr, "false_positive", "hardest_negative"))
+    fn = d[(d.y == 1)].sort_values("p").head(k)
+    fn = fn.assign(error=np.where(fn.p < thr, "miss", "weakest_positive"))
     out = pd.concat([fp, fn])
     cols = [c for c in ["error", "kind", "ops", "p", "path_a", "path_b"] if c in out.columns]
     return out[cols].reset_index(drop=True)

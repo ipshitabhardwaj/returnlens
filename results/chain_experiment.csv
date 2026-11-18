@@ -1,0 +1,3 @@
+method,recall,precision,n_chains
+graph,0.978,1.0,15
+pairwise,0.956,1.0,15
