@@ -30,6 +30,7 @@ def test_amazon_pool_with_mocked_network(tmp_path, monkeypatch):
             for p in range(5) for u in range(3)]
 
     class R:
+        status_code = 200
         def __init__(s, content=b"", raw=None): s.content, s.raw = content, raw
         def raise_for_status(s): pass
         def __enter__(s): return s
@@ -44,3 +45,16 @@ def test_amazon_pool_with_mocked_network(tmp_path, monkeypatch):
     monkeypatch.setattr(requests, "get", fake_get)
     ap = pool.amazon_pool("Fake", str(tmp_path), max_products=5)
     assert len(ap) >= 10 and len({x["product_id"] for x in ap}) == 5
+
+
+def test_find_review_url_falls_back_to_second_source(monkeypatch):
+    class R:
+        def __init__(s, code): s.status_code = code
+        def __enter__(s): return s
+        def __exit__(s, *a): pass
+    monkeypatch.setattr(requests, "get", lambda url, **kw: R(404 if "ucsd" in url else 200))
+    assert "huggingface.co" in pool.find_review_url("Electronics")
+    monkeypatch.setattr(requests, "get", lambda url, **kw: R(404))
+    import pytest
+    with pytest.raises(RuntimeError):
+        pool.find_review_url("Electronics")

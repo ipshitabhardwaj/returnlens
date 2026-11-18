@@ -3,22 +3,54 @@
 import gzip, io, os, glob, random, requests
 import numpy as np, pandas as pd, cv2
 
-REVIEW_URL = (
-    "https://datarepo.eng.ucsd.edu/mcauley_group/data/amazon_2023/raw/review_categories/{cat}.jsonl.gz"
-)
+REVIEW_URLS = [  # tried in order; first one that answers 200 is used
+    "https://datarepo.eng.ucsd.edu/mcauley_group/data/amazon_2023/raw/review_categories/{cat}.jsonl.gz",
+    "https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/resolve/main/raw/review_categories/{cat}.jsonl",
+]
 
 
 def stream_jsonl_gz(url, max_lines):
-    """Yield the first max_lines JSON lines of a remote .jsonl.gz without downloading the whole file."""
+    """Yield the first max_lines JSON lines of a remote .jsonl or .jsonl.gz without downloading the whole file."""
     import json
 
     with requests.get(url, stream=True, timeout=60) as r:
         r.raise_for_status()
-        with gzip.GzipFile(fileobj=r.raw) as gz:
-            for i, line in enumerate(io.TextIOWrapper(gz, encoding="utf-8")):
-                if i >= max_lines:
-                    break
+        if url.endswith(".gz"):
+            lines = io.TextIOWrapper(gzip.GzipFile(fileobj=r.raw), encoding="utf-8")
+        else:
+            lines = (ln.decode("utf-8") for ln in r.iter_lines())
+        for i, line in enumerate(lines):
+            if i >= max_lines:
+                break
+            if line.strip():
                 yield json.loads(line)
+
+
+def check_urls(cats):
+    """Print the HTTP status of every candidate review URL for each category. Run this first if a download fails."""
+    for cat in cats:
+        for u in REVIEW_URLS:
+            url = u.format(cat=cat)
+            try:
+                with requests.get(url, stream=True, timeout=30) as r:
+                    print(r.status_code, url)
+            except Exception as e:
+                print("ERR", type(e).__name__, url)
+
+
+def find_review_url(cat):
+    """First candidate URL that answers 200 for this category; raises with the statuses seen otherwise."""
+    seen = []
+    for u in REVIEW_URLS:
+        url = u.format(cat=cat)
+        try:
+            with requests.get(url, stream=True, timeout=30) as r:
+                if r.status_code == 200:
+                    return url
+                seen.append((r.status_code, url))
+        except Exception as e:
+            seen.append((type(e).__name__, url))
+    raise RuntimeError("no working review URL for %s: %s" % (cat, seen))
 
 
 def _save_image(url, path, max_side=512, timeout=15):
@@ -46,7 +78,7 @@ def amazon_pool(cat, out_dir, max_lines=300_000, max_products=400, per_product=(
     random.seed(seed)
     os.makedirs(out_dir, exist_ok=True)
     cand = {}  # parent_asin -> list of (review_key, url)
-    for k, rec in enumerate(stream_jsonl_gz(REVIEW_URL.format(cat=cat), max_lines)):
+    for k, rec in enumerate(stream_jsonl_gz(find_review_url(cat), max_lines)):
         imgs = rec.get("images") or []
         if not imgs or not rec.get("parent_asin"):
             continue
