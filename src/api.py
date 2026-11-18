@@ -1,3 +1,8 @@
+try:  # torch must load BEFORE sklearn/cv2/lightgbm on Windows, or it fails with WinError 1114
+    import torch  # noqa: F401
+except Exception:
+    pass
+
 """Integration - one FastAPI app, four endpoints, JSON contracts shared by all tracks.
 Stubs first; swap in the real models later."""
 
@@ -24,7 +29,8 @@ def _load_scorer():
     if d and SCORER is None:
         from score_claim import load_scorer
 
-        set_scorer(load_scorer(d))
+        set_scorer(load_scorer(d, image_root=os.environ.get("RETURNLENS_IMAGES"),
+                               embedder=os.environ.get("RETURNLENS_EMBEDDER")))
 
 
 class EvidenceOut(BaseModel):  # Track A -> everyone

@@ -68,9 +68,27 @@ def save_artifacts(scorer, out_dir):
         json.dump(scorer.gallery, f)
 
 
-def load_scorer(out_dir, emb_fn=None, **kw):
+def load_scorer(out_dir, emb_fn=None, image_root=None, embedder=None, device=None, **kw):
+    """Rebuild a scorer from save_artifacts output.
+
+    image_root: folder holding the gallery images. Gallery paths saved in Colab ("/content/img_amazon/x.jpg") are
+        remapped to image_root/x.jpg by file name.
+    embedder: path to embedder.pt (fine-tuned DINOv2). Needed if the verifier was trained with the emb_cos feature.
+    """
     import joblib
 
     clf = joblib.load(os.path.join(out_dir, "verifier.joblib"))
     gallery = json.load(open(os.path.join(out_dir, "gallery.json")))
+    if image_root:
+        gallery = [dict(g, path=os.path.join(image_root, os.path.basename(g["path"]))) for g in gallery]
+    missing = [g["path"] for g in gallery if not os.path.exists(g["path"])]
+    if missing:
+        raise FileNotFoundError(f"{len(missing)} gallery images not found, e.g. {missing[0]} - set image_root")
+    if emb_fn is None and embedder:
+        import torch
+        from retrieval import finetuned
+
+        emb_fn = finetuned(embedder, device or ("cuda" if torch.cuda.is_available() else "cpu"))
+    if emb_fn is None and "emb_cos" in getattr(clf, "feats_", []):
+        raise ValueError("this verifier uses the emb_cos feature: pass embedder=<path to embedder.pt> (or emb_fn)")
     return EvidenceScorer(gallery, clf, emb_fn=emb_fn, **kw)
