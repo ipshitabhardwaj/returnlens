@@ -1,0 +1,88 @@
+batch,id,category,split,source_line,old,now,usable_now,verdict,root_cause,note
+1,1,Cell_Phones_and_Accessories,train,19200,damage_claim_loose,ambiguous_functional_failure_only,False,BORDER,R2,glitter fluid leaking inside case; visible but not breakage
+1,2,Cell_Phones_and_Accessories,train,56026,damage_claim_loose,ambiguous_functional_failure_only,False,FN,R2,melted cable/housing after 10 days; hazard
+1,3,Cell_Phones_and_Accessories,train,58049,damage_claim_loose,ambiguous_functional_failure_only,False,FN,R1,"""started to crack"" after few months"
+1,4,Cell_Phones_and_Accessories,train,64121,damage_claim_strict,ambiguous_functional_failure_only,False,FP,-,functional; support text
+1,5,Electronics,train,13744,damage_claim_loose,ambiguous_functional_failure_only,False,FP,-,functional leak/stuck button
+1,6,Electronics,train,17693,damage_claim_loose,ambiguous_functional_failure_only,False,FP,-,"""chip"" = converter chip"
+1,7,Electronics,train,68962,damage_claim_loose,ambiguous_functional_failure_only,False,FP,-,other cable cracking; item dead
+1,8,Home_and_Kitchen,train,31003,damage_claim_loose,ambiguous_functional_failure_only,False,FP,-,functional leak
+1,9,Home_and_Kitchen,train,46122,damage_claim_loose,ambiguous_functional_failure_only,False,FP,-,functional leak
+1,10,Home_and_Kitchen,train,49781,damage_claim_loose,ambiguous_functional_failure_only,False,FP,-,functional leak
+1,11,Home_and_Kitchen,train,65825,damage_claim_strict,ambiguous_functional_failure_only,False,FP,-,functional leak; hypothetical crack
+1,12,Home_and_Kitchen,train,69479,damage_claim_loose,ambiguous_functional_failure_only,False,FP,-,design leak
+1,13,Cell_Phones_and_Accessories,train,32995,damage_claim_strict,ambiguous_negated_or_preventive,True,FP,-,"claim is ""stop scratches""; (side note: coating rubbing off)"
+1,14,Cell_Phones_and_Accessories,train,34293,damage_claim_loose,ambiguous_negated_or_preventive,True,FP,-,"""prevent scratches"""
+1,15,Electronics,gold_pool,2069,damage_claim_loose,ambiguous_negated_or_preventive,True,FP,-,"""protection against scratches"" (gold_pool)"
+1,16,Electronics,train,9742,damage_claim_loose,ambiguous_negated_or_preventive,True,FP,-,"""preventing broken"""
+1,17,Electronics,train,30968,damage_claim_loose,ambiguous_packaging_only,True,FP,-,tamper seal; packaging
+1,18,Electronics,train,37765,damage_claim_loose,ambiguous_packaging_only,True,BORDER,R6,package came open/seal broken; packaging-only policy
+1,19,Home_and_Kitchen,train,13438,damage_claim_loose,ambiguous_packaging_only,True,FP,-,canning seal
+1,20,Home_and_Kitchen,train,24157,damage_claim_loose,ambiguous_packaging_only,True,BORDER,R6,"used/filthy warehouse item, broken-part bag; condition not breakage"
+1,21,Cell_Phones_and_Accessories,gold_pool,2878,damage_claim_strict,ambiguous_user_caused,True,FN,R3,"""without being dropped"" matched as user-caused (gold_pool)"
+1,22,Cell_Phones_and_Accessories,train,3428,damage_claim_loose,ambiguous_user_caused,True,FP,-,user drop
+1,23,Cell_Phones_and_Accessories,train,4643,damage_claim_strict,ambiguous_user_caused,True,FN,R4a,"scratched, first use; purse storage is benign"
+1,24,Cell_Phones_and_Accessories,train,10929,damage_claim_loose,ambiguous_user_caused,True,BORDER,R4b,ear bow broke while putting on (install-time)
+1,25,Cell_Phones_and_Accessories,train,12481,damage_claim_loose,ambiguous_user_caused,True,BORDER,R4b,glass cracked while removing case (install-time)
+1,26,Cell_Phones_and_Accessories,train,12643,damage_claim_loose,ambiguous_user_caused,True,BORDER,R4b,shattered on application (install-time)
+1,27,Cell_Phones_and_Accessories,train,13209,damage_claim_loose,ambiguous_user_caused,True,BORDER,R4b,band bent/scratched the WATCH while removing
+1,28,Cell_Phones_and_Accessories,train,19713,damage_claim_loose,ambiguous_user_caused,True,BORDER,R2,"charger caught fire; hazard, no visible-damage detail"
+1,29,Cell_Phones_and_Accessories,train,21432,damage_claim_loose,ambiguous_user_caused,True,FN,R4c,"protector ""came shattered"" on arrival; device-possessive pattern misfire"
+1,30,Cell_Phones_and_Accessories,val,24111,damage_claim_loose,ambiguous_user_caused,True,FN,R3,"""I hadn't dropped it"" matched as user-caused (val)"
+2,31,Cell_Phones_and_Accessories,train,29131,damage_claim_loose,ambiguous_user_caused,True,BORDER,R4b,cracked while removing film (install-time)
+2,32,Cell_Phones_and_Accessories,train,29969,damage_claim_loose,ambiguous_user_caused,True,FN,R3,"""not dropping it once"" matched; scratched in 3 days"
+2,33,Cell_Phones_and_Accessories,train,36708,damage_claim_loose,ambiguous_user_caused,False,FP,-,user drop
+2,34,Cell_Phones_and_Accessories,train,42655,damage_claim_loose,ambiguous_user_caused,True,BORDER,R4a,"long crack in purse, user blames keys"
+2,35,Cell_Phones_and_Accessories,train,44624,damage_claim_loose,ambiguous_user_caused,True,FP,-,user drop
+2,36,Cell_Phones_and_Accessories,train,48100,damage_claim_strict,ambiguous_user_caused,True,BORDER,R4a,protector cracked in backpack
+2,37,Cell_Phones_and_Accessories,train,50407,damage_claim_loose,ambiguous_user_caused,True,BORDER,R4b,cracked while removing bubbles (install-time)
+2,38,Cell_Phones_and_Accessories,train,51352,damage_claim_loose,ambiguous_user_caused,True,FN,R4b,broke while unwrapping (arrival-time)
+2,39,Cell_Phones_and_Accessories,train,54052,damage_claim_loose,ambiguous_user_caused,True,FP,-,user drop
+2,40,Cell_Phones_and_Accessories,train,60828,damage_claim_loose,ambiguous_user_caused,True,FN,R4a,broke from pocket; no drop
+2,41,Cell_Phones_and_Accessories,val,62261,damage_claim_strict,ambiguous_user_caused,True,FP,-,user drop (val)
+2,42,Cell_Phones_and_Accessories,train,62606,damage_claim_loose,ambiguous_user_caused,True,FP,-,user drop
+2,43,Cell_Phones_and_Accessories,val,66778,damage_claim_strict,ambiguous_user_caused,True,BORDER,R4b,"shattered by supplied scraper, photos (val)"
+2,44,Cell_Phones_and_Accessories,train,69133,damage_claim_loose,ambiguous_user_caused,True,FP,-,user drop
+2,45,Electronics,train,3075,damage_claim_strict,ambiguous_user_caused,True,FP,-,user disassembly
+2,46,Electronics,train,20981,damage_claim_loose,ambiguous_user_caused,True,FP,-,software bugs
+2,47,Electronics,train,38031,damage_claim_strict,ambiguous_user_caused,True,FP,-,almost dropped
+2,48,Electronics,train,39178,damage_claim_loose,ambiguous_user_caused,True,FP,-,drill bit use-failure
+2,49,Electronics,train,41219,damage_claim_loose,ambiguous_user_caused,True,FN,R3,"""wasn't even trying"" matched; cord broke"
+2,50,Electronics,train,49378,damage_claim_loose,ambiguous_user_caused,True,FP,-,user drop implied
+2,51,Electronics,train,62173,damage_claim_loose,ambiguous_user_caused,True,BORDER,R4b,cracked while laying on
+2,52,Electronics,train,69332,damage_claim_loose,ambiguous_user_caused,True,FP,-,"""nearly tore""; no damage"
+2,53,Home_and_Kitchen,train,19597,damage_claim_strict,ambiguous_user_caused,True,BORDER,-,possible scratches/residue under sticker
+2,54,Home_and_Kitchen,train,24529,damage_claim_strict,ambiguous_user_caused,True,FN,R3,"arrived broken; ""looked like it had been dropped"" matched"
+2,55,Home_and_Kitchen,gold_pool,33834,damage_claim_loose,ambiguous_user_caused,True,BORDER,R4b,"""broke as soon as I tried to use it""; vague (gold_pool)"
+2,56,Home_and_Kitchen,gold_pool,56228,damage_claim_loose,ambiguous_user_caused,True,BORDER,R4b,"plastic corners broke when husband removed plates, photo (gold_pool)"
+2,57,Cell_Phones_and_Accessories,train,9332,damage_claim_loose,damage_low_context,False,BORDER,R7,"""It broke!!!"" too vague/short"
+2,58,Cell_Phones_and_Accessories,train,14912,damage_claim_loose,damage_low_context,True,BORDER,"R7,R4b",pins broke on install; wrong evidence sentence picked
+2,59,Cell_Phones_and_Accessories,train,34992,damage_claim_loose,damage_low_context,False,BORDER,R7,corner broke after a month; claim too short
+2,60,Cell_Phones_and_Accessories,train,66918,damage_claim_strict,damage_low_context,False,BORDER,R7,received one and broken; claim None
+3,61,Home_and_Kitchen,train,63865,damage_claim_strict,damage_low_context,False,BORDER,R7,chipped rim after 2 months; claim too short
+3,62,Electronics,train,29731,damage_claim_strict,needs_human_mixed,True,RETAINED_OK,R10,"routed to needs_human_mixed; 62 genuine scratch+functional, 63 fit defect"
+3,63,Electronics,train,33410,damage_claim_strict,needs_human_mixed,True,RETAINED_OK,R10,"routed to needs_human_mixed; 62 genuine scratch+functional, 63 fit defect"
+3,64,Cell_Phones_and_Accessories,train,12689,damage_claim_loose,other_low_rating,False,BORDER,R1,"protector ""breaks super easily""; vague"
+3,65,Cell_Phones_and_Accessories,train,16828,damage_claim_loose,other_low_rating,False,FN,R1,"""starts to chip/wear off"" after 2 weeks"
+3,66,Cell_Phones_and_Accessories,train,18894,damage_claim_loose,other_low_rating,False,FP,R5,hypothetical crack; user wear
+3,67,Cell_Phones_and_Accessories,train,21634,damage_claim_loose,other_low_rating,False,FP,R5,"adhesion peel, negated scratch"
+3,68,Cell_Phones_and_Accessories,val,24716,damage_claim_strict,other_low_rating,False,FP,R5,user drop; wrong reason label (val)
+3,69,Cell_Phones_and_Accessories,train,36529,damage_claim_loose,other_low_rating,False,FN,R1,"""started to scratch and peel"" <1 month"
+3,70,Cell_Phones_and_Accessories,train,39942,damage_claim_loose,other_low_rating,False,FP,R5,protector resists scratch
+3,71,Cell_Phones_and_Accessories,gold_pool,50051,damage_claim_loose,other_low_rating,False,FP,R5,camera scratch protector (gold_pool)
+3,72,Cell_Phones_and_Accessories,train,65144,damage_claim_loose,other_low_rating,False,FN,"R1,R9","""began to crack""; old NEG window hit ""not wood"""
+3,73,Cell_Phones_and_Accessories,train,67812,damage_claim_loose,other_low_rating,False,FN,"R1,R7","""started to crack""; VIDEOID token in claim"
+3,74,Cell_Phones_and_Accessories,gold_pool,68620,damage_claim_loose,other_low_rating,False,FN,R1,"""began to crack"" (gold_pool)"
+3,75,Electronics,train,10556,damage_claim_loose,other_low_rating,False,FP,R5,"""crack the code"""
+3,76,Electronics,train,21151,damage_claim_loose,other_low_rating,False,FP,R5,"""chip inside"""
+3,77,Electronics,train,33046,damage_claim_loose,other_low_rating,False,FN,R2,"connector melted, photo referenced"
+3,78,Electronics,train,54733,damage_claim_loose,other_low_rating,False,FP,R5,hypothetical crack; bubbling
+3,79,Electronics,train,55432,damage_claim_loose,other_low_rating,False,FN,R2,"charger melted, burned floor; hazard"
+3,80,Electronics,gold_pool,63361,damage_claim_loose,other_low_rating,False,FP,R5,electrical failure (gold_pool)
+3,81,Home_and_Kitchen,train,12279,damage_claim_loose,other_low_rating,False,FP,R5,"""from scratch"""
+3,82,Home_and_Kitchen,val,13409,damage_claim_strict,other_low_rating,False,FP,R5,"""crack the egg"" (val)"
+3,83,Home_and_Kitchen,train,13446,damage_claim_loose,other_low_rating,False,FP,R5,cats scratch
+3,84,Home_and_Kitchen,train,13499,damage_claim_strict,other_low_rating,False,BORDER,R7,"old claim (cats) wrong; ""arrived with pulls in fabric"" w/ photo"
+3,85,Home_and_Kitchen,train,51747,damage_claim_strict,other_low_rating,False,FP,R5,cups melted by user process
+3,86,Home_and_Kitchen,train,59978,damage_claim_loose,other_low_rating,False,FN,"R2,R7",melted power cord; old claim None (photo ref)
+3,87,Home_and_Kitchen,train,62309,damage_claim_strict,other_low_rating,False,FN,"R2,R7",melted/wrinkled numbers on arrival; old claim None (photo ref)
